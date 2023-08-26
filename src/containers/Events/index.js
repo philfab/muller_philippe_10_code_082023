@@ -18,10 +18,13 @@ const EventList = () => {
   // code de base :  pas de filtre par rapport à type mais index (?)
   // new :.filter > si type == 'Toutes' tous les événements sont retournés sinon par type
   // new : .slice().> sous-tableau pagination > si page 1 alors 0 à 8 si page 2  alors 9 à 17
-  const filteredEvents =
-    data?.events
-      ?.filter((event) => type === "Toutes" || event.type === type)
-      .slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE) || [];
+  const filteredEvents = 
+  data?.events
+    ?.sort((evtA, evtB) => new Date(evtA.date) - new Date(evtB.date))// Tri par ordre croissant 
+   /* ?.sort((evtA, evtB) => new Date(evtB.date) - new Date(evtA.date)) // Tri par ordre décroissant */
+    .filter((event) => type === "Toutes" || event.type === type)
+    .slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE)
+  || [];
 
   const changeType = (evtType) => {
     setCurrentPage(1);

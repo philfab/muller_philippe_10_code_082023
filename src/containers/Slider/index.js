@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useData } from "../../contexts/DataContext";
 import { getMonth } from "../../helpers/Date";
 
@@ -6,6 +6,8 @@ import "./style.scss";
 
 const Slider = () => {
   const { data } = useData();
+  const sliderRef = useRef(null); // ajout réf
+  const [isInViewport, setIsInViewport] = useState(true); // pour suivre la visibilité du slider
   const [index, setIndex] = useState(0);
   const byDateDesc = data?.focus.sort((evtA, evtB) =>
     new Date(evtA.date) < new Date(evtB.date) ? -1 : 1
@@ -17,19 +19,36 @@ const Slider = () => {
   // pas à chaque rendu sinon nextCard executé à chaque fois (pas necessaire)
   // effect ne nettoie pas le settimeout (bugs)
   useEffect(() => {
-    if (byDateDesc && byDateDesc.length) {
+    if (byDateDesc && byDateDesc.length && isInViewport) {
       const timer = setTimeout(nextCard, 5000);
       return () => clearTimeout(timer);
     }
     return undefined;
-  }, [index, byDateDesc]);
+  }, [index, byDateDesc, isInViewport]);
+
+  const checkIfInViewport = () => {
+    if (!sliderRef.current) return;
+
+    const rect = sliderRef.current.getBoundingClientRect();
+    const isInView = rect.top < window.innerHeight && rect.bottom > 0;
+
+    setIsInViewport(isInView);
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", checkIfInViewport);
+
+    return () => {
+      window.removeEventListener("scroll", checkIfInViewport);
+    };
+  }, []);
 
   return (
-    <div className="SlideCardList">
+    <div className="SlideCardList" ref={sliderRef}>
       {byDateDesc?.map((event, idx) => (
-        <>
+        // erreur avec syntaxe courte des fragments (key obligatoire avec .map . React.Fragment ne fonctionne pas donc div
+        <div key={event.title}>
           <div
-            key={event.title}
             className={`SlideCard SlideCard--${
               index === idx ? "display" : "hide"
             }`}
@@ -47,16 +66,16 @@ const Slider = () => {
             <div className="SlideCard__pagination">
               {byDateDesc.map((evt, radioIdx) => (
                 <input
-                  key={evt.title} // pas event ni id dans map donc title comme index
+                  key={`radio-${evt.title}`} // pas event ni id dans map donc title comme index
                   type="radio"
                   name="radio-button"
-                  checked={index  === radioIdx} // idx boucle externe donc toujours derniere valeur donc index
+                  checked={index === radioIdx} // idx boucle externe donc toujours derniere valeur donc index
                   readOnly // indique que les radio ne sont pas cliquables (pas de onchange)
                 />
               ))}
             </div>
           </div>
-        </>
+        </div>
       ))}
     </div>
   );
