@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useData } from "../../contexts/DataContext";
 import { getMonth } from "../../helpers/Date";
 
@@ -6,11 +6,10 @@ import "./style.scss";
 
 const Slider = () => {
   const { data } = useData();
-  const sliderRef = useRef(null); // ajout réf
-  const [isInViewport, setIsInViewport] = useState(true); // pour suivre la visibilité du slider
+  const [isPaused, setIsPaused] = useState(false);
   const [index, setIndex] = useState(0);
   const byDateDesc = data?.focus.sort((evtA, evtB) =>
-    new Date(evtA.date) < new Date(evtB.date) ? -1 : 1
+    new Date(evtA.date) > new Date(evtB.date) ? -1 : 1
   );
   const nextCard = () => {
     setIndex(index < byDateDesc.length - 1 ? index + 1 : 0); // byDateDesc.length = longueur tableau donc -1 pour index base 0
@@ -19,32 +18,28 @@ const Slider = () => {
   // pas à chaque rendu sinon nextCard executé à chaque fois (pas necessaire)
   // effect ne nettoie pas le settimeout (bugs)
   useEffect(() => {
-    if (byDateDesc && byDateDesc.length && isInViewport) {
+    if (byDateDesc && byDateDesc.length && !isPaused) {
       const timer = setTimeout(nextCard, 5000);
       return () => clearTimeout(timer);
     }
     return undefined;
-  }, [index, byDateDesc, isInViewport]);
-
-  const checkIfInViewport = () => {
-    if (!sliderRef.current) return;
-
-    const rect = sliderRef.current.getBoundingClientRect();
-    const isInView = rect.top < window.innerHeight && rect.bottom > 0;
-
-    setIsInViewport(isInView);
-  };
+  }, [index, byDateDesc, isPaused]);
 
   useEffect(() => {
-    window.addEventListener("scroll", checkIfInViewport);
+    const handleKeydown = (e) => {
+      if (e.code === "Space") {
+        setIsPaused(!isPaused);
+      }
+    };
+    window.addEventListener("keydown", handleKeydown);
 
     return () => {
-      window.removeEventListener("scroll", checkIfInViewport);
+      window.removeEventListener("keydown", handleKeydown);
     };
-  }, []);
+  }, [isPaused]);
 
   return (
-    <div className="SlideCardList" ref={sliderRef}>
+    <div className="SlideCardList">
       {byDateDesc?.map((event, idx) => (
         // erreur avec syntaxe courte des fragments (key obligatoire avec .map . React.Fragment ne fonctionne pas donc div
         <div key={event.title}>
