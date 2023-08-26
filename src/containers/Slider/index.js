@@ -11,14 +11,19 @@ const Slider = () => {
     new Date(evtA.date) < new Date(evtB.date) ? -1 : 1
   );
   const nextCard = () => {
-    setTimeout(
-      () => setIndex(index < byDateDesc.length ? index + 1 : 0),
-      5000
-    );
+    setIndex(index < byDateDesc.length - 1 ? index + 1 : 0); // byDateDesc.length = longueur tableau donc -1 pour index base 0
   };
+
+  // pas à chaque rendu sinon nextCard executé à chaque fois (pas necessaire)
+  // effect ne nettoie pas le settimeout (bugs)
   useEffect(() => {
-    nextCard();
-  });
+    if (byDateDesc && byDateDesc.length) {
+      const timer = setTimeout(nextCard, 5000);
+      return () => clearTimeout(timer);
+    }
+    return undefined;
+  }, [index, byDateDesc]);
+
   return (
     <div className="SlideCardList">
       {byDateDesc?.map((event, idx) => (
@@ -40,12 +45,13 @@ const Slider = () => {
           </div>
           <div className="SlideCard__paginationContainer">
             <div className="SlideCard__pagination">
-              {byDateDesc.map((_, radioIdx) => (
+              {byDateDesc.map((evt, radioIdx) => (
                 <input
-                  key={`${event.id}`}
+                  key={evt.title} // pas event ni id dans map donc title comme index
                   type="radio"
                   name="radio-button"
-                  checked={idx === radioIdx}
+                  checked={index  === radioIdx} // idx boucle externe donc toujours derniere valeur donc index
+                  readOnly // indique que les radio ne sont pas cliquables (pas de onchange)
                 />
               ))}
             </div>

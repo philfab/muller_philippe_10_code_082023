@@ -6,8 +6,7 @@ const data = {
   focus: [
     {
       title: "World economic forum",
-      description:
-        "Oeuvre à la coopération entre le secteur public et le privé.",
+      description: "Oeuvre à la coopération entre le secteur public et le privé.",
       date: "2022-02-29T20:28:45.744Z",
       cover: "/images/evangeline-shaw-nwLTVwb7DbU-unsplash1.png",
     },
