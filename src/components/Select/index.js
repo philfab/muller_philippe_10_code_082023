@@ -13,7 +13,7 @@ const Select = ({
   label,
   type = "normal",
 }) => {
-  const [value, setValue] = useState("Toutes"); // au lieu de null
+  const [value, setValue] = useState();
   const [collapsed, setCollapsed] = useState(true); // setCollapsed=boolean
   const changeValue = (newValue) => {
     onChange(newValue); //  onChange() >> onChange(newValue) onChange doit connaitre la nouvelle valeur
@@ -31,9 +31,9 @@ const Select = ({
           {!collapsed && (
             <>
               {!titleEmpty && (
-                <li onClick={() => changeValue("Toutes")}>
+                <li onClick={() => changeValue(null)}>
                   <input
-                    defaultChecked={value === "Toutes"}
+                    defaultChecked={!value}
                     name="selected"
                     type="radio"
                   />{" "}

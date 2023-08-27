@@ -11,7 +11,7 @@ const PER_PAGE = 9;
 /* eslint-disable no-console */
 const EventList = () => {
   const { data, error } = useData();
-  const [type, setType] = useState("Toutes"); // au lieu de null
+  const [type, setType] = useState();
   const [currentPage, setCurrentPage] = useState(1);
 
   // code de base : que type soit vrai ou faux retourne toujours data?.events
@@ -22,7 +22,7 @@ const EventList = () => {
   data?.events
    /* ?.sort((evtA, evtB) => new Date(evtA.date) - new Date(evtB.date))// Tri par ordre croissant */
     ?.sort((evtA, evtB) => new Date(evtB.date) - new Date(evtA.date)) // Tri par ordre décroissant 
-    .filter((event) => type === "Toutes" || event.type === type)
+    .filter((event) => !type || event.type === type)
     .slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE)
   || [];
 
