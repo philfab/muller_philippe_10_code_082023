@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor  } from "@testing-library/react";
 import Home from "./index";
 
 describe("When Form is created", () => {
@@ -13,17 +13,21 @@ describe("When Form is created", () => {
   describe("and a click is triggered on the submit button", () => {
     it("the success message is displayed", async () => {
       render(<Home />);
-      fireEvent(
-        await screen.findByText("Envoyer"),
-        new MouseEvent("click", {
-          cancelable: true,
-          bubbles: true,
-        })
-      );
+      
+      fireEvent.click(await screen.findByText("Envoyer"));
+      
       await screen.findByText("En cours");
+      
+      // attend que le texte "en cours" disparaisse
+      await waitFor(() => {
+        expect(screen.queryByText("En cours")).not.toBeInTheDocument();
+      }, {
+        timeout: 1100 // attendre +1s (mock)
+      });
+      
       await screen.findByText("Message envoyé !");
     });
-  });
+});
 
 });
 

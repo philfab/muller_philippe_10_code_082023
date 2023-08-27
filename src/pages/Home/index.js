@@ -106,7 +106,7 @@ const Page = () => {
               </div>
             }
           >
-            {({ setIsOpened }) => (
+            {({ setIsOpened }) => ( // render prop, destructuration de props > appelé par modal (idem à props.setIsOpened)
               <Form onSuccess={() => setIsOpened(true)} onError={() => null} />
             )}
           </Modal>
