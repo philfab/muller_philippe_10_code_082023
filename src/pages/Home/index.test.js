@@ -1,10 +1,4 @@
-
-import {
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import Home from "./index";
 import { api, DataProvider } from "../../contexts/DataContext";
 
@@ -13,8 +7,8 @@ const data = {
     {
       id: 1,
       type: "soirée entreprise",
-      date: "2022-04-29T20:28:45.744Z",
-      title: "Conférence #productCON",
+      date: "2022-11-29T20:28:45.744Z",
+      title: "test#productCON",
       cover: "/images/stem-list-EVgsAbL51Rk-unsplash.png",
       description:
         "Présentation des outils analytics aux professionnels du secteur",
@@ -42,7 +36,6 @@ const data = {
     },
   ],
 };
-
 
 describe("When Form is created", () => {
   it("a list of fields card is displayed", async () => {
@@ -76,25 +69,26 @@ describe("When Form is created", () => {
 });
 
 describe("When a page is created", () => {
-  
   it("a list of events is displayed", async () => {
     api.loadData = jest.fn().mockReturnValue(data);
-  
+
     render(
       <DataProvider>
         <Home />
       </DataProvider>
     );
-  
+
     expect(await screen.findByTestId("event-card")).toBeInTheDocument();
-    const eventList = await screen.getAllByTestId("card-testid").filter(card => !card.classList.contains("EventCard--small"));
-    expect(eventList.length).toEqual(2);// 2 cartes attendues celles de data qui n'ont pas la classe EventCard--small (last)
+    const eventList = await screen
+      .getAllByTestId("card-testid")
+      .filter((card) => !card.classList.contains("EventCard--small"));
+    expect(eventList.length).toEqual(2); // 2 cartes attendues celles de data qui n'ont pas la classe EventCard--small (last)
   });
 
   it("a list a people is displayed", () => {
     render(<Home />);
     const peopleList = screen.getAllByTestId("people-card");
-    expect(peopleList.length).toEqual(6);
+    expect(peopleList.length).toEqual(6); // l'équipe est composée de 6 personnes
   });
 
   it("a footer is displayed", () => {
@@ -105,16 +99,17 @@ describe("When a page is created", () => {
 
   it("an event card, with the last event, is displayed", async () => {
     api.loadData = jest.fn().mockReturnValue(data);
-  
+
     render(
       <DataProvider>
         <Home />
       </DataProvider>
     );
-  
-    expect(await screen.findByTestId("event-card")).toBeInTheDocument();
-    const eventList = await screen.getAllByTestId("card-testid").filter(card => card.classList.contains("EventCard--small"));
-    expect(eventList.length).toEqual(1);// 1 carte attendue celle de last qui possède la classe EventCard--small
-  });
 
+    expect(await screen.findByTestId("event-card")).toBeInTheDocument();
+    const eventList = await screen
+      .getAllByTestId("card-testid")
+      .filter((card) => card.classList.contains("EventCard--small"));
+    expect(eventList.length).toEqual(1); // 1 carte attendue celle de last qui possède la classe EventCard--small
+  });
 });

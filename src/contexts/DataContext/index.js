@@ -33,7 +33,9 @@ export const DataProvider = ({ children }) => {
     getData();
   });
 
-  const lastEvent = data?.events?.[data.events.length - 1] || null; // retourne le dernier événement
+  const lastEvent = data?.events
+  ?.sort((a, b) => new Date(b.date) - new Date(a.date))
+  [0] || null; // retourne le dernier événement
 
   return (
     <DataContext.Provider

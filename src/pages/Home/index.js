@@ -15,6 +15,8 @@ import ModalEvent from "../../containers/ModalEvent";
 
 const Page = () => {
   const { last } = useData();
+  // eslint-disable-next-line no-console
+  // console.log(last);
   return (
     <>
       <header>
@@ -106,7 +108,9 @@ const Page = () => {
               </div>
             }
           >
-            {({ setIsOpened }) => ( // render prop, destructuration de props > appelé par modal (idem à props.setIsOpened)
+            {(
+              { setIsOpened } // render prop, destructuration de props > appelé par modal (idem à props.setIsOpened)
+            ) => (
               <Form onSuccess={() => setIsOpened(true)} onError={() => null} />
             )}
           </Modal>
