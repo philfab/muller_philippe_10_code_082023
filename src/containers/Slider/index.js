@@ -40,6 +40,7 @@ const Slider = () => {
 
   return (
     <div className="SlideCardList">
+    {isPaused ? <div data-testid="slider-status">Paused</div> : <div data-testid="slider-status">Not Paused</div>}
       {byDateDesc?.map((event, idx) => (
         // erreur avec syntaxe courte des fragments (key obligatoire avec .map . React.Fragment ne fonctionne pas donc div
         <div key={event.title}>
