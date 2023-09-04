@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import Slider from "./index";
 import { api, DataProvider } from "../../contexts/DataContext";
 
@@ -40,5 +40,18 @@ describe("When slider is created", () => {
     await screen.findByText(
       "Oeuvre à la coopération entre le secteur public et le privé."
     );
+  });
+});
+
+describe("Slider pause on space press", () => {
+  it("should pause the slider when space key is pressed", () => {
+    render(<Slider />);
+
+    expect(screen.getByTestId("slider-status").textContent).toBe("Not Paused");
+
+    // simule l'appui sur espace
+    fireEvent.keyDown(window, { key: "Space", code: "Space" });
+
+    expect(screen.getByTestId("slider-status").textContent).toBe("Paused");
   });
 });
